@@ -1,0 +1,33 @@
+.List {
+  &-container {
+    padding: 10px;
+    width: 400px;
+    border: 2px solid black;
+    border-radius: 15px;
+  }
+
+  &-title {}
+
+  &-item {
+    padding: 15px;
+    border: none;
+    border-radius: 0;
+    border-bottom: 2px solid rgb(202, 200, 200);
+  }
+
+  &-button {
+    &_type {
+      &_change {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+      }
+
+      &_delete {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+      }
+    }
+  }
+}

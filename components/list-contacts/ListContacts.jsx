@@ -1,11 +1,16 @@
 import { ListGroup, CloseButton } from "react-bootstrap"
 import { useDispatch, useSelector } from 'react-redux'
-import { useCallback, useEffect } from "react";
-import { Spinner } from 'react-bootstrap';
-import { fetchContacts } from "../../slices/contacts";
+import { useCallback, useEffect } from "react"
+import { Spinner, Button } from 'react-bootstrap'
+import { fetchContacts } from "../../slices/contacts"
 import uuid from 'react-uuid'
 
-import { contactsSelector, fetchDeleteContact } from "../../slices/contacts";
+// Стили
+import styles from "./list-contacts.module.scss"
+
+console.log(styles);
+
+import { contactsSelector, fetchDeleteContact } from "../../slices/contacts"
 
 export const ListContacts = () => {
   const dispatch = useDispatch();
@@ -26,13 +31,15 @@ export const ListContacts = () => {
         {
           listContacts.map((element) => {
             return (
-              <ListGroup.Item as="li" key={element.uniqueKey}>
-                <h4 key={uuid()}>{element.name}</h4>
+              <ListGroup.Item className={styles["List-item"]} as="li" key={element.uniqueKey}>
+                <h4 key={uuid()}>{`${element.name} ${element.lastName}`}</h4>
                 <a key={uuid()} href={`tel:${element.number}`}>{element.number}</a>
-                <CloseButton key={uuid()} onClick={_ => dispatch(fetchDeleteContact(element.id))}></CloseButton>
-                {
-                  loadingDelete ? <p>Элемент удаляется</p> : null
-                }
+                <CloseButton className={styles["List-button_type_delete"]} key={uuid()} onClick={_ => dispatch(fetchDeleteContact(element.id))}></CloseButton>
+                <Button className={styles["List-button_type_change"]} variant="info">
+                  {
+                    loadingDelete ? "Элемент удаляется" : "Изменить элемент"
+                  }
+                </Button>
               </ListGroup.Item>
             )
           })
@@ -42,13 +49,15 @@ export const ListContacts = () => {
   }, [dispatch, listContacts, loading, loadingDelete]);
 
   return (
-    <section>
-      <h3>Список контактов в хранилище</h3>
-      <ListGroup as="ul">
+    <section className={styles["List-container"]}>
+      <h3 className={styles["List-title"]}>
         {
-          content()
+          listContacts.length > 0 ? "Список контактов" : "Контакты отсутствуют"
         }
-      </ListGroup>
+      </h3>
+      {
+        content()
+      }
     </section>
   )
 }
