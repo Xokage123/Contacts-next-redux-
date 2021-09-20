@@ -1,11 +1,3 @@
 {
-  "contacts": [
-    {
-      "name": "Artemov",
-      "lastName": "Alekseevich",
-      "number": "89035630905",
-      "uniqueKey": "3327c1-4616-5167-17c4-52fc825f741",
-      "id": 1
-    }
-  ]
+  "contacts": []
 }
