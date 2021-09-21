@@ -5,18 +5,17 @@ import {
   getAllContacts,
   API_deleteContact,
   API_addNewContact,
-  API_searchContact
+  API_searchContact,
+  API_updateContact
 } from '../api';
-
-export const CONTACTS = "contacts";
 
 // Начальное состояние хранилища
 export const initialState = {
   loading: false,
   loadingAdd: false,
   loadingDelete: false,
+  loadingUpdate: false,
   hasError: false,
-  textError: null,
   listContacts: []
 }
 
@@ -34,7 +33,9 @@ export const contactsSlice = createSlice({
     addContactLoading: state => {
       state.loadingAdd = true;
     },
-    // Удаление контакта
+    updateContactLoading: state => {
+      state.loadingUpdate = true;
+    },
     deleteContact: (state, {
       payload
     }) => {
@@ -52,6 +53,17 @@ export const contactsSlice = createSlice({
         payload
       ];
     },
+    updateContact: (state, {
+      payload
+    }) => {
+      state.loadingUpdate = false;
+      state.listContacts = state.listContacts.map(element => {
+        if (element.id === payload.id) {
+          return payload;
+        }
+        return element;
+      })
+    },
     getContactsSuccess: (state, {
       payload
     }) => {
@@ -59,9 +71,8 @@ export const contactsSlice = createSlice({
       state.loading = false;
       state.hasError = false;
     },
-    getContactsFailure: (state, textError) => {
+    getContactsFailure: state => {
       state.hasError = true;
-      state.textError = textError;
     }
   }
 });
@@ -73,14 +84,12 @@ export const {
   deleteContact,
   deleteContactLoading,
   addNewContact,
-  addContactLoading
+  addContactLoading,
+  updateContact,
+  updateContactLoading
 } = contactsSlice.actions;
-
 export const contactsSelector = state => state.contacts;
-
 export const contactsReducer = contactsSlice.reducer;
-
-
 
 export const fetchContacts = _ => {
   return async dispatch => {
@@ -93,7 +102,7 @@ export const fetchContacts = _ => {
       dispatch(getContactsSuccess(listContacts));
     } catch (er) {
       // При ошибке, выкидываем ощибку
-      dispatch(getContactsFailure(er.message));
+      dispatch(getContactsFailure());
     }
   }
 }
@@ -104,7 +113,7 @@ export const fetchDeleteContact = id => {
     API_deleteContact(id).then(_ => {
       dispatch(deleteContact(id));
     }).catch(er => {
-      dispatch(getContactsFailure(er.message));
+      dispatch(getContactsFailure());
     })
   }
 }
@@ -116,5 +125,16 @@ export const fetchAddContact = infoContact => {
       const contact = await API_searchContact(infoContact.uniqueKey);
       dispatch(addNewContact(contact));
     });
+  }
+}
+
+export const fetchUpdateContact = infoContact => {
+  return async dispatch => {
+    dispatch(updateContactLoading());
+
+    try {
+      const newInfoContact = await API_updateContact(infoContact);
+      dispatch(updateContact(newInfoContact));
+    } catch (_) {}
   }
 }

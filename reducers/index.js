@@ -6,8 +6,13 @@ import {
   contactsReducer
 } from "../slices/contacts";
 
+import {
+  contactReducer
+} from "../slices/contact";
+
 const rootReducer = combineReducers({
-  contacts: contactsReducer
+  contacts: contactsReducer,
+  contact: contactReducer
 })
 
 export default rootReducer;

@@ -6,6 +6,7 @@ import rootReducer from '../reducers';
 
 //Стили
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'simplebar/dist/simplebar.min.css';
 import '../styles/globals.scss'
 
 const mainStore = configureStore({

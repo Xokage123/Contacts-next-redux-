@@ -46,3 +46,26 @@ export const API_deleteContact = async id => {
   const information = await response.json();
   return information;
 }
+
+export const API_getContactInfo = async id => {
+  const response = await fetch(`http://localhost:4200/contacts/${id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json"
+    },
+  });
+  const contactInformation = await response.json();
+  return contactInformation
+}
+
+export const API_updateContact = async (info) => {
+  const response = await fetch(`http://localhost:4200/contacts/${info.id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(info)
+  });
+  const updateContact = await response.json();
+  return updateContact;
+}
