@@ -22,6 +22,7 @@ export const FormContacts = () => {
   const {
     register,
     getValues,
+    reset,
     handleSubmit,
     formState: {
       errors
@@ -42,6 +43,7 @@ export const FormContacts = () => {
     dispatch(fetchAddContact(contactInfo));
     openModal();
     let tokenClearModal = setTimeout(() => {
+      reset({});
       closeModal();
       clearTimeout(tokenClearModal);
     }, 4000);

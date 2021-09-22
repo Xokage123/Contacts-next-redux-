@@ -37,6 +37,7 @@ export const FormChangeContacts = props => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: {
       errors
     },
@@ -57,6 +58,7 @@ export const FormChangeContacts = props => {
     let tokenClearModal = setTimeout(() => {
       closeModal();
       clearTimeout(tokenClearModal);
+      reset({});
       router.push("/");
     }, 4000);
   }, []);
