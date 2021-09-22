@@ -39,7 +39,7 @@ export const FormContacts = () => {
       ...data,
       uniqueKey: uuid()
     };
-    // dispatch(fetchAddContact(contactInfo));
+    dispatch(fetchAddContact(contactInfo));
     openModal();
     let tokenClearModal = setTimeout(() => {
       closeModal();
@@ -122,7 +122,7 @@ export const FormContacts = () => {
         style={customStylesModal}
         contentLabel="Example Modal"
       >
-        <p className="success">Данные контакта успешно изменены! Сейчас вас перенаправит на главную страницу.</p>
+        <p className="success">Контакт успешно создан</p>
       </Modal>
     </>
   )
