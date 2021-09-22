@@ -1,23 +1,30 @@
+// React
+import {
+  useCallback,
+  useState,
+  useEffect
+} from "react"
 import Modal from 'react-modal';
-import { Form, Button } from "react-bootstrap"
-import { useForm } from 'react-hook-form';
-import { useCallback, useState } from "react"
-import { useRouter } from "next/router"
-import { fetchUpdateContact } from "../../slices/contacts";
-import { useDispatch } from "react-redux";
-
-const customStyles = {
-  content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)',
-  },
-};
-
-Modal.setAppElement(FormChangeContacts);
+import {
+  Form,
+  Button
+} from "react-bootstrap"
+import {
+  useForm
+} from 'react-hook-form';
+import {
+  useRouter
+} from "next/router"
+import {
+  fetchUpdateContact
+} from "../../slices/contacts";
+import {
+  useDispatch
+} from "react-redux";
+import {
+  maskPhone,
+  customStylesModal
+} from "../../config"
 
 
 export const FormChangeContacts = props => {
@@ -34,6 +41,10 @@ export const FormChangeContacts = props => {
       errors
     },
   } = useForm();
+  useEffect(() => {
+    maskPhone.mask(document.querySelector(".Form_type_change-input"))
+    Modal.setAppElement(`.Form_type_change`);
+  }, [])
 
   const onSubmit = useCallback(data => {
     const newContactInfo = {
@@ -59,16 +70,28 @@ export const FormChangeContacts = props => {
   }, []);
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
+    <Form
+      className={[
+        "Form_type_change",
+        "Form"
+      ]
+      }
+      onSubmit={
+        handleSubmit(onSubmit)
+      }
+    >
       <Button onClick={_ => router.back()} variant="secondary">Вернуться назад</Button>
       <h3>Форма обновления контакта</h3>
 
       <Form.Group className="mb-3" controlId="formBasicName">
         <Form.Label>Имя*</Form.Label>
-        <Form.Control {...register('name', {
-          value: contactInfo.name,
-          required: true
-        })} type="text" placeholder="Введите имя" />
+        <Form.Control
+          {...register('name', {
+            value: contactInfo.name,
+            required: true
+          })}
+          type="text"
+          placeholder="Введите имя" />
         {errors.name && <p className="error">Данное поле обязательно для заполнения</p>}
       </Form.Group>
 
@@ -83,10 +106,24 @@ export const FormChangeContacts = props => {
 
       <Form.Group className="mb-3" controlId="formBasicNumber">
         <Form.Label>Номер телефона*</Form.Label>
-        <Form.Control  {...register('number', {
-          value: contactInfo.number,
-          required: true
-        })} type="number" placeholder="Введите номер телефона" />
+        <Form.Control
+          {...register('number', {
+            value: contactInfo.number,
+            required: true,
+            validate: value => {
+              const input = document.querySelector(".Form_type_change-input");
+              const reallyValuePhone = input.inputmask ? input.inputmask.unmaskedvalue() : value;
+              console
+              if (reallyValuePhone.length === 10) {
+                return true;
+              }
+              return false;
+            }
+          })}
+          className="Form_type_change-input"
+          type="text"
+          placeholder="Введите номер телефона"
+        />
         {errors.number && <p className="error">Данное поле обязательно для заполнения</p>}
       </Form.Group>
 
@@ -97,7 +134,7 @@ export const FormChangeContacts = props => {
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
-        style={customStyles}
+        style={customStylesModal}
         contentLabel="Example Modal"
       >
         <p className="success">Данные контакта успешно изменены! Сейчас вас перенаправит на главную страницу.</p>

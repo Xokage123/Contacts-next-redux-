@@ -1,85 +1,112 @@
+// React
 import { useDispatch, useSelector } from 'react-redux'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useEffect, useState } from 'react'
+import Modal from 'react-modal';
+import { useForm } from 'react-hook-form';
 import uuid from 'react-uuid'
-
 // slices-redux
 import { fetchAddContact, contactsSelector } from '../../slices/contacts'
-
 // Componets
 import { ListContacts } from '../list-contacts/ListContacts'
-
 // Data
 import { NUMBER_INPUTS } from '../../data'
-
+// Other
+import { maskPhone, customStylesModal } from "../../config"
 // Стили
 import { Form, Button } from "react-bootstrap"
-import styles from "./form.module.scss"
 
 export const FormContacts = () => {
+  const [modalIsOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
-
   const { loadingAdd } = useSelector(contactsSelector);
+  const {
+    register,
+    getValues,
+    handleSubmit,
+    formState: {
+      errors
+    },
+  } = useForm();
 
-  const clearForm = useCallback((ev) => {
-    for (let i = 0; i <= NUMBER_INPUTS; i++) {
-      ev.target[i].value = "";
-    }
-  }, [])
-
-
-  const informationContact = useMemo(_ => {
-    return {
-      name: "",
-      lastName: "",
-      number: null
-    }
+  useEffect(() => {
+    maskPhone.mask(document.querySelector(`.Form_type_create-input`));
+    Modal.setAppElement(`.Form_type_create`);
   }, []);
 
-  const toggleName = useCallback(value => {
-    informationContact.name = value;
-  }, [informationContact]);
+  const onSubmit = useCallback(data => {
+    console.log(getValues("number"));
+    const contactInfo = {
+      ...data,
+      uniqueKey: uuid()
+    };
+    // dispatch(fetchAddContact(contactInfo));
+    openModal();
+    let tokenClearModal = setTimeout(() => {
+      closeModal();
+      clearTimeout(tokenClearModal);
+    }, 4000);
+  }, []);
 
-  const toggleLastName = useCallback(value => {
-    informationContact.lastName = value;
-  }, [informationContact]);
+  const openModal = useCallback(() => {
+    setIsOpen(true);
+  }, []);
 
-  const toggleNumber = useCallback(value => {
-    informationContact.number = value;
-  }, [informationContact]);
+  const closeModal = useCallback(() => {
+    setIsOpen(false);
+  }, []);
 
-  const addNewContact = useCallback(() => {
-    if (informationContact.name && informationContact.lastName && informationContact.number) {
-      informationContact.uniqueKey = uuid();
-      dispatch(fetchAddContact(informationContact));
-      informationContact.name = "";
-      informationContact.lastName = "";
-      informationContact.number = null;
-    } else {
-      console.log("Вы ввели не все необходимые данные!!!");
-    }
-  }, [dispatch, informationContact]);
   return (
     <>
-      <Form onSubmit={ev => {
-        ev.preventDefault();
-        addNewContact();
-        clearForm(ev);
-      }} className={styles.form}>
+      <Form
+        onSubmit={
+          handleSubmit(onSubmit)
+        }
+        className={[
+          "Form",
+          "Form_type_create"
+        ]}
+      >
         <h3>Форма добавление контакта</h3>
 
         <Form.Group className="mb-3" controlId="formBasicName">
           <Form.Label>Имя*</Form.Label>
-          <Form.Control onChange={ev => toggleName(ev.target.value)} type="text" placeholder="Введите имя" />
+          <Form.Control
+            {...register('name', {
+              required: true
+            })}
+            type="text"
+            placeholder="Введите имя"
+          />
+          {errors.name && <p className="error">Данное поле обязательно для заполнения</p>}
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="formBasicLastname">
           <Form.Label>Фамилия*</Form.Label>
-          <Form.Control onChange={ev => toggleLastName(ev.target.value)} type="text" placeholder="Введите фамилию" />
+          <Form.Control {...register('lastName', {
+            required: true
+          })} type="text" placeholder="Введите фамилию" />
+          {errors.lastName && <p className="error">Данное поле обязательно для заполнения</p>}
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="formBasicNumber">
           <Form.Label>Номер телефона*</Form.Label>
-          <Form.Control onChange={ev => toggleNumber(ev.target.value)} type="number" placeholder="Введите номер телефона" />
+          <Form.Control
+            {...register('number', {
+              required: true,
+              validate: value => {
+                const input = document.querySelector(".Form_type_create-input");
+                const reallyValuePhone = input.inputmask ? input.inputmask.unmaskedvalue() : value;
+                if (reallyValuePhone.length === 10) {
+                  return true;
+                }
+                return false;
+              }
+            })}
+            className="Form_type_create-input"
+            type="text"
+            placeholder="Введите номер телефона"
+          />
+          {errors.number && <p className="error">Данное поле обязательно для заполнения</p>}
         </Form.Group>
 
         <Button variant="primary" type="submit">
@@ -89,6 +116,14 @@ export const FormContacts = () => {
         </Button>
       </Form>
       <ListContacts />
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        style={customStylesModal}
+        contentLabel="Example Modal"
+      >
+        <p className="success">Данные контакта успешно изменены! Сейчас вас перенаправит на главную страницу.</p>
+      </Modal>
     </>
   )
 }
