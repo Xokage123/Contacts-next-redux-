@@ -35,7 +35,6 @@ export const FormContacts = () => {
   }, []);
 
   const onSubmit = useCallback(data => {
-    console.log(getValues("number"));
     const contactInfo = {
       ...data,
       uniqueKey: uuid()
@@ -47,7 +46,7 @@ export const FormContacts = () => {
       closeModal();
       clearTimeout(tokenClearModal);
     }, 4000);
-  }, []);
+  }, [closeModal, dispatch, openModal, reset]);
 
   const openModal = useCallback(() => {
     setIsOpen(true);
@@ -122,7 +121,7 @@ export const FormContacts = () => {
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
         style={customStylesModal}
-        contentLabel="Example Modal"
+        contentLabel="Модальное окно добавление контакта"
       >
         <p className="success">Контакт успешно создан</p>
       </Modal>

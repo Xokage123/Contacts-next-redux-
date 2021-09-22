@@ -11,21 +11,23 @@ import {
 } from "react-bootstrap"
 import {
   useForm
-} from 'react-hook-form';
+} from 'react-hook-form'
 import {
   useRouter
 } from "next/router"
-import {
-  fetchUpdateContact
-} from "../../slices/contacts";
+// React-Redux
 import {
   useDispatch
 } from "react-redux";
+// Redux-slices
+import {
+  fetchUpdateContact
+} from "../../slices/contacts";
+// Others
 import {
   maskPhone,
   customStylesModal
 } from "../../config"
-
 
 export const FormChangeContacts = props => {
   const dispatch = useDispatch();
@@ -61,7 +63,7 @@ export const FormChangeContacts = props => {
       reset({});
       router.push("/");
     }, 4000);
-  }, []);
+  }, [closeModal, contactInfo.id, contactInfo.uniqueKey, dispatch, openModal, reset, router]);
 
   const openModal = useCallback(() => {
     setIsOpen(true);
