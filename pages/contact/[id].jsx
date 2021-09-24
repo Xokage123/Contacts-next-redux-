@@ -17,7 +17,7 @@ export default function Contact() {
   useEffect(() => {
     router.query.id ? localStorage.setItem("lastContactId", router.query.id) : null;
     dispatch(fetchGetContact(localStorage.getItem("lastContactId")));
-  }, []);
+  }, [dispatch, router.query.id]);
   const generateContent = useCallback(() => {
     if (loadGet) {
       return (

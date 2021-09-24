@@ -1,6 +1,6 @@
 // React
 import { useDispatch, useSelector } from 'react-redux'
-import { useCallback, useMemo, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Modal from 'react-modal';
 import { useForm } from 'react-hook-form';
 import uuid from 'react-uuid'
