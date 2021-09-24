@@ -21,7 +21,6 @@ export const FormContacts = () => {
   const { loadingAdd } = useSelector(contactsSelector);
   const {
     register,
-    getValues,
     reset,
     handleSubmit,
     formState: {
@@ -34,20 +33,6 @@ export const FormContacts = () => {
     Modal.setAppElement(`.Form_type_create`);
   }, []);
 
-  const onSubmit = useCallback(data => {
-    const contactInfo = {
-      ...data,
-      uniqueKey: uuid()
-    };
-    dispatch(fetchAddContact(contactInfo));
-    openModal();
-    let tokenClearModal = setTimeout(() => {
-      reset({});
-      closeModal();
-      clearTimeout(tokenClearModal);
-    }, 4000);
-  }, [closeModal, dispatch, openModal, reset]);
-
   const openModal = useCallback(() => {
     setIsOpen(true);
   }, []);
@@ -55,6 +40,20 @@ export const FormContacts = () => {
   const closeModal = useCallback(() => {
     setIsOpen(false);
   }, []);
+
+  const onSubmit = useCallback(data => {
+    const contactInfo = {
+      ...data,
+      uniqueKey: uuid()
+    };
+    dispatch(fetchAddContact(contactInfo)); 
+    openModal();
+    let tokenClearModal = setTimeout(() => {  
+      reset({});
+      closeModal();
+      clearTimeout(tokenClearModal);
+    }, 4000);
+  }, [closeModal, dispatch, openModal, reset]);
 
   return (
     <>
